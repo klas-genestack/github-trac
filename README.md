@@ -19,8 +19,13 @@ Installation
    ```ini
    [github]
    secret = <the random shared secret entered as the “Token” in your GitHub settings>
-   closed_status = closed # optional, defaults to "closed"
-   resync = True # optional, but recommended; ensures your Trac repos are in sync after a GH commit
+
+   # optional, defaults to "closed"
+   closed_status = closed
+
+   # optional, but recommended; ensures your Trac repos are in sync immediately
+   # after a GH commit
+   resync = True
    ```
 7. Create local mirror clones of your GitHub repositories on the machine running Trac, in directories that are
    writable by the user that Trac runs as.
@@ -31,7 +36,8 @@ Installation
 
 1. When you clone your GitHub repositories for Trac, make sure that you use `git clone --mirror`. If you use
    `git clone --bare`, your Trac repository will *not* resync properly after a changeset.
-2. The name given to your repository in Trac *must* match the name of the repository on GitHub.
+2. The name given to your repository in Trac *must* match the name of the repository on GitHub if you want to
+   perform auto-resync.
 
 Code browser and changeset viewer
 ---------------------------------
