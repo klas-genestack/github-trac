@@ -58,7 +58,12 @@ class GithubPlugin(Component):
             self.hook.process(commit, self.closed_status)
 
         if self.resync:
-            repository.git.repo.fetch('--all', '--tags')
+            # CachedRepository
+            if repository.repos:
+                repository.repos.git.repo.fetch('--all', '--tags')
+            else:
+                repository.git.repo.fetch('--all', '--tags')
+
             repository.sync()
 
         request.send_response(204)
