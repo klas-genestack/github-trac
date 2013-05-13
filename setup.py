@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = 'GithubPlugin',
-    version = '0.5.1',
+    version = '0.5.2',
     author = 'Colin Snover',
     author_email = 'tracplugins@zetafleet.com',
     description = 'GitHub support for Trac',

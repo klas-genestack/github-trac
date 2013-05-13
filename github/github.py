@@ -60,9 +60,9 @@ class GithubPlugin(Component):
         if self.resync:
             # CachedRepository
             if repository.repos:
-                repository.repos.git.repo.fetch('--all', '--tags')
+                repository.repos.git.repo.fetch('--all', '--tags', '--prune')
             else:
-                repository.git.repo.fetch('--all', '--tags')
+                repository.git.repo.fetch('--all', '--tags', '--prune')
 
             repository.sync()
 
