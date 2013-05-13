@@ -97,7 +97,7 @@ def _process_changeset_view(self, request):
     else:
         repository_name, repository, new_path = manager.get_repository_by_path(new_path)
 
-    if _valid_github_request(request) and re.match(r'^https?://(?:www\.)?github\.com/', repository.params['url']):
+    if _valid_github_request(request) and repository.params['url'] and re.match(r'^https?://(?:www\.)?github\.com/', repository.params['url']):
         url = repository.params['url'].rstrip('/') + '/'
 
         if old:
