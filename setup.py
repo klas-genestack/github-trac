@@ -7,6 +7,7 @@ setup(
     author_email = 'tracplugins@zetafleet.com',
     description = 'GitHub support for Trac',
     long_description = 'Adds GitHub post-commit hook support to Trac.',
+    url = 'https://github.com/csnover/github-trac',
     license = 'New BSD',
     packages = ['github'],
     package_data = { 'github' : [] },
