@@ -97,8 +97,10 @@ def _process_changeset_view(self, request):
     else:
         repository_name, repository, new_path = manager.get_repository_by_path(new_path)
 
-    if _valid_github_request(request) and repository.params['url'] and re.match(r'^https?://(?:www\.)?github\.com/', repository.params['url']):
-        url = repository.params['url'].rstrip('/') + '/'
+    repository_url = repository.params.get('url', '')
+
+    if _valid_github_request(request) and re.match(r'^https?://(?:www\.)?github\.com/', repository_url):
+        url = repository_url.rstrip('/') + '/'
 
         if old:
             url += 'compare/' + old + '...' + new
@@ -128,9 +130,10 @@ def _process_browser_view(self, request):
 
         manager = RepositoryManager(self.env)
         repository_name, repository, path = manager.get_repository_by_path(path)
+        repository_url = repository.params.get('url', '')
 
-        if repository.params['url'] and re.match(r'^https?://(?:www\.)?github\.com/', repository.params['url']):
-            url = repository.params['url'].rstrip('/') + '/blob/' + rev + '/' + path
+        if re.match(r'^https?://(?:www\.)?github\.com/', repository_url):
+            url = repository_url.rstrip('/') + '/blob/' + rev + '/' + path
             request.redirect(url)
         else:
             return _old_process_browser_view(self, request)
