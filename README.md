@@ -22,7 +22,11 @@ Installation
    closed_status = closed # optional, defaults to "closed"
    resync = True # optional, but recommended; ensures your Trac repos are in sync after a GH commit
    ```
-7. Add your Git repositories to Trac, following the recommendations below if
+7. Add your Git repositories to Trac, following the recommendations below if you want your code browser/changeset
+   viewer to redirect to GitHub.
+
+**Important:** When you clone your GitHub repositories for Trac, make sure that you use `git clone --mirror`. If you
+use `git clone --bare`, your Trac repository will *not* resync properly after a changeset.
 
 Code browser and changeset viewer
 ---------------------------------
