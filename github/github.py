@@ -48,16 +48,16 @@ class GithubPlugin(Component):
 
         payload = simplejson.loads(payload)
 
-        repository_name = payload['repository']['name']
-        repository = self.env.get_repository(repository_name)
-
-        if not repository:
-            raise Exception('Repository "%s" not found' % repository_name)
-
         for commit in payload['commits']:
             self.hook.process(commit, self.closed_status)
 
         if self.resync:
+            repository_name = payload['repository']['name']
+            repository = self.env.get_repository(repository_name)
+
+            if not repository:
+                raise Exception('Repository "%s" not found' % repository_name)
+
             # CachedRepository
             if repository.repos:
                 repository.repos.git.repo.fetch('--all', '--tags', '--prune')
