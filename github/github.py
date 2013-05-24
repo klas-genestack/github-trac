@@ -8,7 +8,6 @@ from trac.web.api import IRequestHandler, RequestDone
 from trac.wiki import IWikiSyntaxProvider
 from tracopt.versioncontrol.git.git_fs import GitConnector
 from genshi.builder import tag
-from hook import CommitHook
 import simplejson
 import re
 
@@ -17,15 +16,6 @@ class GithubPlugin(Component):
 
     secret = Option('github', 'secret', '',
         """The shared secret passed by GitHub when a post-commit hook is dispatched.""")
-
-    closed_status = Option('github', 'closed_status', 'closed',
-        """The status used when closing a ticket.""")
-
-    resync = BoolOption('github', 'resync', False,
-        """Whether or not to fetch and resync repositories when a commit notification is received.""")
-
-    def __init__(self):
-        self.hook = CommitHook(self.env)
 
     #################
     # IRequestHandler
@@ -48,23 +38,28 @@ class GithubPlugin(Component):
 
         payload = simplejson.loads(payload)
 
-        for commit in payload['commits']:
-            self.hook.process(commit, self.closed_status)
+        repository_name = payload['repository']['name']
+        repository = self.env.get_repository(repository_name)
 
-        if self.resync:
-            repository_name = payload['repository']['name']
-            repository = self.env.get_repository(repository_name)
+        if not repository:
+            raise Exception('Repository "%s" not found' % repository_name)
 
-            if not repository:
-                raise Exception('Repository "%s" not found' % repository_name)
+        # CachedRepository
+        if repository.repos:
+            repository.repos.git.repo.remote('update')
+        # Normal repository
+        else:
+            repository.git.repo.remote('update')
 
-            # CachedRepository
-            if repository.repos:
-                repository.repos.git.repo.fetch('--all', '--tags', '--prune')
-            else:
-                repository.git.repo.fetch('--all', '--tags', '--prune')
+        manager = RepositoryManager(self.env)
 
-            repository.sync()
+        revision_ids = [ commit['id'] for commit in payload['commits'] ]
+
+        try:
+            self.env.log.debug('Adding changesets: %s' % revision_ids)
+            manager.notify('changeset_added', repository_name, revision_ids)
+        except Exception as exception:
+            self.env.log.error(exception)
 
         request.send_response(204)
         request.send_header('Content-Length', 0)
