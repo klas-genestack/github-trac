@@ -6,7 +6,10 @@ from trac.versioncontrol.web_ui.browser import BrowserModule
 from trac.versioncontrol.web_ui.changeset import ChangesetModule
 from trac.web.api import IRequestHandler, RequestDone
 from trac.wiki import IWikiSyntaxProvider
-from tracopt.versioncontrol.git.git_fs import GitConnector
+try:
+    from tracopt.versioncontrol.git.git_fs import GitConnector
+except ImportError:
+    from tracext.git.git_fs import GitConnector
 from genshi.builder import tag
 import simplejson
 import re
